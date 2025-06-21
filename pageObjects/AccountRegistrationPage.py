@@ -9,7 +9,7 @@ class AccountRegistrationPage():
     txt_confpassword_name = "confirm"
     chk_policy_name = "agree"
     btn_cont_xpath="//input[@value='Continue']"
-    text_msg_conf_xpath="//h1[normalize-space()='Your Account Has Been Created!']"
+    text_msg_conf_xpath="//p[contains(text(),'Congratulations! Your new account has been success')]"
 
     def __init__(self, driver):
         self.driver = driver

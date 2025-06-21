@@ -1,4 +1,4 @@
-pip install pytest==5.4.3
+pip install pytest==7.2.0
 pip install selenium
 pip install webdriver-manager
 pip install pytest-html

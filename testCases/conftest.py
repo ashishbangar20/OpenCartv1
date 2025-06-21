@@ -1,52 +1,53 @@
 import os
-
+from datetime import datetime
 import pytest
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
-from datetime import datetime
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.edge.service import Service as EdgeService
 
 @pytest.fixture()
-def setup(browser):
-    if browser == 'edge':
-        driver = webdriver.Edge(EdgeChromiumDriverManager().install())
-        print("Launching Edge browser.........")
-    elif browser == 'firefox':
-        driver = webdriver.Firefox(GeckoDriverManager().install())
-        print("Launching firefox browser.........")
+def setup(browser):  # browser will come from the CLI option
+    if browser == "chrome":
+        service = ChromeService("D:\\pythonTesting\\Chrome_driver\\chromedriver.exe")
+        driver = webdriver.Chrome(service=service)
+        print("Launching Chrome browser...")
+    elif browser == "firefox":
+        service = FirefoxService("D:\\pythonTesting\\Firefox_driver\\geckodriver.exe")
+        driver = webdriver.Firefox(service=service)
+        print("Launching Firefox browser...")
+    elif browser == "edge":
+        service = EdgeService("D:\\pythonTesting\\Edge_driver\\msedgedriver.exe")
+        driver = webdriver.Edge(service=service)
+        print("Launching Edge browser...")
     else:
-        driver = webdriver.Chrome(ChromeDriverManager().install())
-        print("Launching chrome browser.........")
+        raise Exception("Browser not supported: " + browser)
+
+    driver.maximize_window()
     return driver
-
-
-def pytest_addoption(parser):    # This will get the value from CLI /hooks
-    parser.addoption("--browser")
+def pytest_addoption(parser):
+    parser.addoption("--browser", action="store", default="chrome", help="Browser: chrome | firefox | edge")
 
 @pytest.fixture()
-def browser(request):  # This will return the Browser value to setup method
+def browser(request):
     return request.config.getoption("--browser")
 
-########### pytest HTML Report ################
 
+########### pytest HTML Report ################
 
 # It is hook for Adding Environment info to HTML Report
 def pytest_configure(config):
     config._metadata['Project Name'] = 'Opencart'
     config._metadata['Module Name'] = 'CustRegistration'
     config._metadata['Tester'] = 'Pavan'
-    #config.option.htmlpath = os.path.abspath(os.curdir)+"\\reports\\"+datetime.now().strftime("%d-%m-%Y %H-%M-%S")+".html"
-
 
 # It is hook for delete/Modify Environment info to HTML Report
-@pytest.mark.optionalhook
+@pytest.hookimpl(optionalhook=True)
 def pytest_metadata(metadata):
     metadata.pop("JAVA_HOME", None)
     metadata.pop("Plugins", None)
 
 #Specifying report folder location and save report with timestamp
-    @pytest.hookimpl(tryfirst=True)
-    def pytest_configure(config):
-        config.option.htmlpath = os.path.abspath(os.curdir)+"\\reports\\"+datetime.now().strftime("%d-%m-%Y %H-%M-%S")+".html"
-
+@pytest.hookimpl(tryfirst=True)
+def pytest_configure(config):
+    config.option.htmlpath = os.path.abspath(os.curdir)+"\\reports\\"+datetime.now().strftime("%d-%m-%Y %H-%M-%S")+".html"

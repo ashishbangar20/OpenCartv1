@@ -37,13 +37,10 @@ class Test_001_AccountReg:
         self.regpage.setPrivacyPolicy()
         self.regpage.clickContinue()
         self.confmsg=self.regpage.getconfirmationmsg()
-        if self.confmsg=="Your Account Has Been Created!":
+        if "successfully created" in self.confmsg.lower():
             self.logger.info("Account registration is passed..")
             assert True
-            self.driver.close()
         else:
-            self.driver.save_screenshot(os.path.abspath(os.curdir)+"\\screenshots\\"+"test_account_reg.png")
+            self.driver.save_screenshot(os.path.abspath(os.curdir) + "\\screenshots\\" + "test_account_reg.png")
             self.logger.error("Account registration is failed.")
-            self.driver.close()
             assert False
-        self.logger.info("**** test_001_AccountRegistration finished *** ")
