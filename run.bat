@@ -1,1 +1,6 @@
-pytest -s -v -m .\testCases\ -m "sanity"
+@echo off
+where python
+where pytest
+python --version
+pytest --version
+pytest -s -v .\testCases\ -m "sanity"
